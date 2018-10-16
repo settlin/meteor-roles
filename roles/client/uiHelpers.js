@@ -1,5 +1,3 @@
-"use strict"
-
 /**
  * Convenience functions for use on client.
  *
@@ -16,12 +14,11 @@
 //
 // Use a semi-private variable rather than declaring UI
 // helpers directly so that we can unit test the helpers.
-// XXX For some reason, the UI helpers are not registered 
+// XXX For some reason, the UI helpers are not registered
 // before the tests run.
 //
 Roles._uiHelpers = {
-
-  /**
+	/**
    * UI helper to check if current user is in at least one
    * of the target roles.  For use in client-side templates.
    *
@@ -40,53 +37,53 @@ Roles._uiHelpers = {
    * @param {String} [scope] Optional, name of scope to check.
    * @return {Boolean} `true` if current user is in at least one of the target roles.
    * @static
-   * @for UIHelpers 
+   * @for UIHelpers
    */
-  isInRole: function (role, scope) {
-    var user = Meteor.user(),
-        comma = (role || '').indexOf(','),
-        roles
+	isInRole: function(role, scope) {
+		var user = Meteor.user(),
+			comma = (role || '').indexOf(','),
+			roles;
 
-    if (!user) return false
-    if (!Match.test(role, String)) return false
+		if (!user) return false;
+		if (!Match.test(role, String)) return false;
 
-    if (comma !== -1) {
-      roles = _.reduce(role.split(','), function (memo, r) {
-        if (!r || !Roles._trim(r)) {
-          return memo
-        }
-        memo.push(Roles._trim(r))
-        return memo
-      }, [])
-    } else {
-      roles = [role]
-    }
+		if (comma !== -1) {
+			roles = role.split(',').reduce(function(memo, r) {
+				if (!r || !Roles._trim(r)) {
+					return memo;
+				}
+				memo.push(Roles._trim(r));
+				return memo;
+			}, []);
+		}
+		else {
+			roles = [role];
+		}
 
-    if (Match.test(scope, String)) {
-      return Roles.userIsInRole(user, roles, scope)
-    }
+		if (Match.test(scope, String)) {
+			return Roles.userIsInRole(user, roles, scope);
+		}
 
-    return Roles.userIsInRole(user, roles)
-  }
-}
-
+		return Roles.userIsInRole(user, roles);
+	},
+};
 
 
 ////////////////////////////////////////////////////////////
 // Register UI helpers
 //
 
-if (Roles.debug && console.log) {
-  console.log("[roles] Roles.debug =", Roles.debug)
+if (Roles.debug && console.log) { // eslint-disable-line no-console
+	console.log('[roles] Roles.debug =', Roles.debug); // eslint-disable-line no-console
 }
 
-if ('undefined' !== typeof Package.blaze &&
-    'undefined' !== typeof Package.blaze.Blaze &&
-    'function'  === typeof Package.blaze.Blaze.registerHelper) {
-  _.each(Roles._uiHelpers, function (func, name) {
-    if (Roles.debug && console.log) {
-      console.log("[roles] registering Blaze helper '" + name + "'")
-    }
-    Package.blaze.Blaze.registerHelper(name, func) 
-  })
+if (typeof Package.blaze !== 'undefined' &&
+    typeof Package.blaze.Blaze !== 'undefined' &&
+    typeof Package.blaze.Blaze.registerHelper  === 'function') {
+	Roles._uiHelpers.forEach(function(func, name) {
+		if (Roles.debug && console.log) { // eslint-disable-line no-console
+			console.log("[roles] registering Blaze helper '" + name + "'"); // eslint-disable-line no-console
+		}
+		Package.blaze.Blaze.registerHelper(name, func);
+	});
 }

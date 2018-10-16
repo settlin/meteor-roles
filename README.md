@@ -1,4 +1,4 @@
-meteor-roles
+meteor-roles v2.0
 ============
 
 Authorization package for Meteor - compatible with built-in accounts package.
@@ -208,7 +208,7 @@ var users = [
       {name:"Admin User",email:"admin@example.com",roles:['admin']}
     ];
 
-_.each(users, function (user) {
+users.forEach(function (user) {
   var id;
 
   id = Accounts.createUser({
@@ -218,7 +218,7 @@ _.each(users, function (user) {
   });
 
   if (user.roles.length > 0) {
-    _.each(user.roles, function (role) {
+    user.roles.forEach(function (role) {
       Roles.createRole(role, {unlessExists: true});
     });
     // Need _id of existing user record so this call must come after `Accounts.createUser`.
